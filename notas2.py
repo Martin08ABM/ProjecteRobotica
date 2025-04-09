@@ -191,5 +191,6 @@ entry_nombre_nota.grid()
 entry_contenido_nota.grid()
 boton_crear_nota = tk.Button(frame_crear, text="Crear nota", command=crearNotas)
 boton_crear_nota.grid()
+#zdadadacaadadaaadaad
 
 pantalla.mainloop()
