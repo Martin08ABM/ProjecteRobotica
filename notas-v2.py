@@ -153,19 +153,19 @@ def eliminarRecordatorio():
 pantalla = tk.Tk()
 pantalla.configure(background="#D6D5C2")
 pantalla.title("Notas, Recordatorios y Tareas")
-pantalla.geometry("800x600")
+pantalla.geometry("350x460")
 
 # Frame para la creación de elementos
 frame_crear = tk.Frame(pantalla)
-frame_crear.grid(row=0, column=0, columnspan=3)
+frame_crear.grid(row=1, column=0, columnspan=3)
 
 # Texto "Qué quieres hacer"
 label_que_hacer = tk.Label(pantalla, text="¿Qué quieres hacer?")
-label_que_hacer.grid(row=1, column=0, columnspan=3, sticky="nsew")
+label_que_hacer.grid(row=0, column=0, columnspan=3, sticky="nsew")
 
 # Frame para los botones de selección horizontal
 frame_botones_seleccion = tk.Frame(pantalla)
-frame_botones_seleccion.grid(row=2, column=1, columnspan=3, sticky="nsew")
+frame_botones_seleccion.grid(row=4, column=0, columnspan=3, sticky="nsew")
 
 # ELEMENTOS DE LA PARTE GRÁFICA
 # FUNCIONES PARA AÑADIR LOS DIFERENTES ELEMENTOS
@@ -283,13 +283,13 @@ def eliminarRecordatorioInterfaz():
 # Botones elección de añadir un elemento
 # Botones elección de añadir un elemento
 boton_seleccion_tarea = tk.Button(pantalla, text="Añadir tarea", takefocus=False, command=añadirTarea)
-boton_seleccion_tarea.grid(row=0, column=0, padx=10, pady=10)
+boton_seleccion_tarea.grid(row=3, column=0, padx=10, pady=10)
 
 boton_seleccion_nota = tk.Button(pantalla, text="Añadir nota", takefocus=False, command=añadirNota)
-boton_seleccion_nota.grid(row=0, column=1, padx=10, pady=10)
+boton_seleccion_nota.grid(row=3, column=1, padx=10, pady=10)
 
 boton_seleccion_recordatorio = tk.Button(pantalla, text="Añadir recordatorio", takefocus=False, command=añadirRecordatorio)
-boton_seleccion_recordatorio.grid(row=0, column=2, padx=10, pady=10)
+boton_seleccion_recordatorio.grid(row=3, column=2, padx=10, pady=10)
 
 # Frame para la eliminación de elementos
 frame_eliminar = tk.Frame(pantalla)
@@ -297,13 +297,13 @@ frame_eliminar.grid()
 
 # Botones elección de eliminar un elemento
 boton_eliminar_tarea_interfaz = tk.Button(pantalla, text="Eliminar tarea", takefocus=False, command=eliminarTareaInterfaz)
-boton_eliminar_tarea_interfaz.grid(row=1, column=0, padx=10, pady=10)
+boton_eliminar_tarea_interfaz.grid(row=2, column=0, padx=10, pady=10)
 
 boton_eliminar_nota_interfaz = tk.Button(pantalla, text="Eliminar nota", takefocus=False, command=eliminarNotaInterfaz)
-boton_eliminar_nota_interfaz.grid(row=1, column=1, padx=10, pady=10)
+boton_eliminar_nota_interfaz.grid(row=2, column=1, padx=10, pady=10)
 
 boton_eliminar_recordatorio_interfaz = tk.Button(pantalla, text="Eliminar recordatorio", takefocus=False, command=eliminarRecordatorioInterfaz)
-boton_eliminar_recordatorio_interfaz.grid(row=1, column=2, padx=10, pady=10)
+boton_eliminar_recordatorio_interfaz.grid(row=2, column=2, padx=10, pady=10)
 
 # Bucle para que se muestre el programa
 pantalla.mainloop()
