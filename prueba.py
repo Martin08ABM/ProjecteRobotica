@@ -1,8 +1,10 @@
 # Importaciones generales
 import tkinter as tk
 from tkinter import messagebox, ttk
-from datetime import datetime
+from datetime import date
+from datetime import datetime, timedelta
 import os
+from notifypy import Notify
 
 # FUNCIONES BÁSICAS PARA CREAR Y ELIMINAR LAS DIFERENTES OPCIONES QUE SE LE DAN AL USUARIO
 # FUNCIONES PARA CREAR ELEMENTOS Y GUARDARLOS (BACKEND)
@@ -49,24 +51,51 @@ def crearNotas():
 def crearRecordatorios():
     # Variables propias
     nombreRecordatorio = entry_nombre_recordatorio.get().strip()
-    fecha = entry_fecha_recordatorio.get().strip()
+    fecha_str = entry_fecha_recordatorio.get().strip()
 
     # Lógica de guardado
-    if nombreRecordatorio and fecha:
+    if nombreRecordatorio and fecha_str:
         try:
-            fecha = datetime.strptime(fecha, "%d/%m/%Y").date()
+            fechaRecordatorio = datetime.strptime(fecha_str, "%d/%m/%Y").date()
             with open("recordatorios.txt", "a") as archivo_recordatorios:
-                archivo_recordatorios.write(f"\nRecordatorio: {nombreRecordatorio}\nFecha: {fecha}\n\n")
-            messagebox.showinfo("Éxito", f"Recordatorio '{nombreRecordatorio}' guardado para el día: {fecha}") # Mensaje de  éxito en caso de que el guardado de la tarea sea correcto
+                archivo_recordatorios.write(f"\nRecordatorio: {nombreRecordatorio}\nFecha: {fechaRecordatorio}\n\n")
+            messagebox.showinfo("Éxito", f"Recordatorio '{nombreRecordatorio}' guardado para el día: {fechaRecordatorio}") # Mensaje de  éxito en caso de que el guardado de la tarea sea correcto
             entry_nombre_recordatorio.delete(0, tk.END)
             entry_fecha_recordatorio.delete(0, tk.END)
             actualizar_visualizaciones()  # Actualizar visualización después de crear un recordatorio
+
+            # Programar la notificación
+            programarNotificacion(nombreRecordatorio, fechaRecordatorio)
+
         except ValueError:
             messagebox.showerror("Error", "La fecha no es correcta, usa dd/mm/yyyy") # Mensaje de error en caso de que la fecha no tenga el formato correcto
     elif not nombreRecordatorio:
         messagebox.showerror("Error", "Por favor, ingresa el nombre del recordatorio") # Mensaje de error en case de que falte el nombre el nombre del recordatorio
-    elif not fecha:
+    elif not fecha_str:
         messagebox.showerror("Error", "Por favor, ingresa la fecha del recordatorio") # Mensaje de error en caso de faltar el contenido del recordatorio
+
+def programarNotificacion(nombreRecordatorio, fechaRecordatorio):
+    diaDeHoy = date.today()
+    if fechaRecordatorio == diaDeHoy:
+        ahora = datetime.now()
+        # Programar para 20 segundos después de la hora actual
+        horaNotificacion = ahora + timedelta(seconds=10)
+        diferencia = (horaNotificacion - ahora).total_seconds()
+        pantalla.after(int(diferencia * 1000), enviar_notificacion, nombreRecordatorio)
+    elif fechaRecordatorio > diaDeHoy:
+        # Programar para el día del recordatorio a las 00:00:20
+        fecha_hora_notificacion = datetime(fechaRecordatorio.year, fechaRecordatorio.month, fechaRecordatorio.day, 0, 0, 20)
+        ahora = datetime.now()
+        if fecha_hora_notificacion > ahora:
+            diferencia = (fecha_hora_notificacion - ahora).total_seconds()
+            pantalla.after(int(diferencia * 1000), enviar_notificacion, nombreRecordatorio)
+
+def enviar_notificacion(nombreRecordatorio):
+    notification = Notify()
+    notification.title = f"{nombreRecordatorio}"
+    notification.message = f"El recordatorio {nombreRecordatorio} ha llegado"
+    notification.send()
+
 
 # FUNCIONES PARA ELIMINAR ELEMENTOS (BACKEND)
 
@@ -329,6 +358,7 @@ def actualizar_visualizaciones():
     cargar_notas()
     cargar_recordatorios()
 
+
 # FUNCIONES PARA AÑADIR LOS DIFERENTES ELEMENTOS (FRONTEND)
 # FUNCIONES PARA CREAR LOS ELEMENTOS Y GUARDARLOS (FRONTEND)
 
@@ -342,8 +372,8 @@ def añadirTarea():
     label_nombre_tarea = tk.Label(frame_crear, text="Nombre de la tarea:", bg="#34495E", fg="white", padx=5, pady=5)
     label_nombre_tarea.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 
-    global entry_nombre_tarea 
-    entry_nombre_tarea = tk.Entry(frame_crear) # Renderizado de la caja donde se agrega el nombre de la tarea 
+    global entry_nombre_tarea
+    entry_nombre_tarea = tk.Entry(frame_crear) # Renderizado de la caja donde se agrega el nombre de la tarea
     entry_nombre_tarea.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
     label_descripcion_tarea = tk.Label(frame_crear, text="Descripción de la tarea:", bg="#34495E", fg="white", padx=5, pady=5)
@@ -387,13 +417,13 @@ def añadirRecordatorio():
     for widget in frame_crear.winfo_children():
         widget.destroy()
 
-    # Lógica con la que aparecen los inputs necesarios para que el usuario rellene los campos necesarios con la informació solicitada
-    label_nombre_recordatorio = tk.Label(frame_crear, text="Nombre del recordatorio:", bg="#34495E", fg="white", padx=5, pady=5) 
+# Lógica con la que aparecen los inputs necesarios para que el usuario rellene los campos necesarios con la informació solicitada
+    label_nombre_recordatorio = tk.Label(frame_crear, text="Nombre del recordatorio:", bg="#34495E", fg="white", padx=5, pady=5)
     label_nombre_recordatorio.grid(row=0, column=0, sticky="ew", padx=5, pady=5) # Renderizado de la caja donde se agrega el nombre del recordatorio
 
     global entry_nombre_recordatorio
     entry_nombre_recordatorio = tk.Entry(frame_crear)
-    entry_nombre_recordatorio.grid(row=1, column=0, sticky="ew", padx=5, pady=5) 
+    entry_nombre_recordatorio.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
     label_fecha_recordatorio = tk.Label(frame_crear, text="Fecha (dd/mm/yyyy):", bg="#34495E", fg="white", padx=5, pady=5)
     label_fecha_recordatorio.grid(row=2, column=0, sticky="ew", padx=5, pady=5) # Renderizado de la caja en la que el usuario escribirá la fecha en la que quiere que le salga el recordatorio
@@ -508,12 +538,12 @@ def on_window_resize(event):
             text_widget.config(width=0, height=10)
 
 # VINCULAR EL EVENTO PREVIO PARA QUE SE EJECUTE CON LA FUNCIÓN "configure"
-pantalla.bind("<Configure>", on_window_resize) # 
+pantalla.bind("<Configure>", on_window_resize) #
 
 # CARGAR LOS DATOS PREVIAMENTE GUARDADOS EN LOS ARCHIVOS CORRESPONDIENTES
 actualizar_visualizaciones()
 
-# BUCLE PRINCIPAL PARA QUE SE MUESTRE EL PROGRAMA 
+# BUCLE PRINCIPAL PARA QUE SE MUESTRE EL PROGRAMA
 # Y SE RENDERIZE EN LA PANTALLA
 pantalla.mainloop()
 
