@@ -179,7 +179,7 @@ def eliminarRecordatorio():
 pantalla = tk.Tk()
 pantalla.configure(background="#F0F3F4")
 pantalla.title("Notas, Recordatorios y Tareas")
-pantalla.geometry("800x600")  # Tamaño inicial más grande para acomodar la visualización
+pantalla.geometry("800x700")  # Tamaño inicial más grande para acomodar la visualización
 
 # Configurar los pesos de filas y columnas para responsividad
 pantalla.grid_columnconfigure(0, weight=1)
