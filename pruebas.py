@@ -365,7 +365,6 @@ def actualizar_visualizaciones():
 # Función para añadir una tarea, parte gráfica
 def añadirTarea():
     # Limpiar pantalla
-    for widget in frame_crear.winfo_children():
         widget.destroy()
 
     # Lógica con la que aparecen inputs al usuario para que rellene los campos de infromación requerida
